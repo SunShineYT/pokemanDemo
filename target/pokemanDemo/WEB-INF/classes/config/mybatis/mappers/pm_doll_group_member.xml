@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pokeman.model.PmDollGroupMember">
+    <insert id="saveDollToDollGroup" parameterType="pmDollGroupMember">
+        INSERT INTO `pm_doll_group_member` (`DGM_ID`,`DGM_DOLL_GROUP_ID`, `DGM_DOLL_ID`, `DGM_TYPE`, `CREATE_TIME`)
+        VALUES (#{dgmId},#{dollGroupId}, #{dollId}, #{type},#{createTime});
+    </insert>
+
+    <select id="findDollGroupMember" parameterType="map" resultType="pmDollGroupMember">
+        SELECT
+        pdgm.DGM_ID dgmId,
+        pdgm.DGM_DOLL_GROUP_ID dollGroupId,
+        pdgm.DGM_DOLL_ID dollId,
+        pdgm.DGM_TYPE type,
+        pdgm.CREATE_TIME createTime
+        FROM pm_doll_group_member pdgm
+        WHERE
+        1=1
+        <if test="dollGroupId != null ">
+            AND DGM_DOLL_GROUP_ID = #{dollGroupId}
+        </if>
+        <if test="type != 0 ">
+            AND DGM_TYPE = #{type}
+        </if>
+        ORDER BY pdgm.CREATE_TIME DESC
+    </select>
+
+    <delete id="deleteDollGroupByDollGroupId" parameterType="map">
+        DELETE
+        FROM
+        pm_doll_group_member
+        WHERE
+        DGM_DOLL_GROUP_ID = #{dollGroupId}
+    </delete>
+</mapper>

@@ -1,0 +1,8 @@
+com\pokeman\gateway\controller\TestAction.class
+com\pokeman\model\PmDollGroup.class
+com\pokeman\model\PmPokemanDollGroupRel.class
+com\pokeman\util\UUIDGeneratorUtils.class
+com\pokeman\model\PmDollGroupMember.class
+com\pokeman\model\PmPokemanInfo.class
+com\pokeman\model\PmDollInfo.class
+com\pokeman\dao\impl\DollInfoDaoImpl.class

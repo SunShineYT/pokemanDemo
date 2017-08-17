@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+     ">
+
+
+    <import resource="classpath:/config/spring/spring-mybatis.xml"/>
+    <import resource="classpath:/config/spring/spring-mvc.xml"/>
+    <import resource="classpath:/config/spring/spring-transaction.xml"/>
+    <import resource="classpath:/config/spring/spring-annotation.xml"/>
+
+    <!--激活@Required 等标签-->
+    <context:annotation-config/>
+    <!-- DispatcherServlet上下文，只搜索@Controller标注的类，不搜索其他标注的类 -->
+    <context:component-scan base-package="com.pokeman.gateway.controller">
+        <!--<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>-->
+    </context:component-scan>
+    <!-- 指定搜索自动装配组件的路径 -->
+    <context:component-scan base-package="com.pokeman.dao.impl.*">
+        <!--<context:include-filter type="assignable" expression="com.pokeman.dao.impl.DollInfoDaoImpl"/>-->
+    </context:component-scan>
+
+    <!-- 开启注解 -->
+    <mvc:annotation-driven/>
+    <!--处理器适配器 -->
+    <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
+    <!--ViewResolver 视图解析器 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!--<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>-->
+        <property name="prefix" value="/WEB-INF/jsps"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+    <!-- spring mvc的文件上传解析,这里的bean的id必须是multipartResolver否则无法使用MultipartHttpServletRequest -->
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="UTF-8" />
+    </bean>
+
+</beans>

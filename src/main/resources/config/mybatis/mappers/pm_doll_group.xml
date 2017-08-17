@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pokeman.model.PmDollGroup">
+    <insert id="saveDollGroup" parameterType="pmDollGroup">
+        INSERT INTO `pm_doll_group` (`DOLL_GROUP_ID`,`DOLL_GROUP_NAME`, `CREATE_TIME`)
+        VALUES (#{dollGroupId},#{dollGroupName}, #{createTime});
+    </insert>
+
+    <select id="findDollGroupList" parameterType="map" resultType="pmDollGroup">
+        SELECT
+        pdg.DOLL_GROUP_ID dollGroupId,
+        pdg.DOLL_GROUP_NAME dollGroupName,
+        pdg.CREATE_TIME createTime
+        FROM pm_doll_group pdg
+        WHERE
+        1=1
+        <if test="dollGroupName != null ">
+            AND DI_DOLL_NAME like CONCAT('%', #{dollGroupName},'%' )
+        </if>
+        ORDER BY pdg.CREATE_TIME DESC
+    </select>
+
+    <delete id="deleteDollGroupById" parameterType="map">
+        DELETE
+        FROM
+        pm_doll_group
+        WHERE
+        DOLL_GROUP_ID = #{dollGroupId}
+    </delete>
+</mapper>

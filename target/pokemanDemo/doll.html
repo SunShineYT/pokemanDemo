@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+    <meta charset="utf-8">
+    <title>测试页面</title>
+    <script src="https://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+    <script src="http://apps.bdimg.com/libs/angular.js/1.4.6/angular.min.js"></script>
+    <script src="../js/dollController.js"></script>
+    <style src="../css/dollStyle.css"></style>
+    <style>
+        .text-peru {
+            color: peru;
+        }
+
+        .text-purple {
+            color: rebeccapurple;
+        }
+
+        .text-blue {
+            color: dodgerblue;
+        }
+
+        .dash-line-4 {
+            border-top: 1px dashed #3ca2e2;
+            margin-bottom: 10px;
+            margin-top: 10px;
+        }
+
+        .tab-tit {
+            height: 37px;
+            border-bottom: 2px solid #3ca2e2;
+        }
+
+        .tab-tit .current {
+            background-color: #3ca2e2;
+            color: #fff;
+            border-color: #3ca2e2;
+        }
+
+        .tab-tit a {
+            height: 36px;
+            line-height: 36px;
+            padding: 0 15px;
+            margin-right: 3px;
+            border: 1px solid #ddd;
+            border-bottom: 0;
+            background-color: #fff;
+            color: #666;
+            display: inline-block;
+            border-radius: 5px 5px 0 0;
+            -webkit-border-radius: 5px 5px 0 0;
+            -moz-border-radius: 5px 5px 0 0;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .col-tit {
+            height: 24px;
+            line-height: 50px;
+            border-left: 5px solid #3ca2e2;
+            font-size: 18px;
+            padding-left: 10px;
+            margin: 13px 0;
+        }
+
+        .btn {
+            min-width: 50px;
+            height: 34px;
+            line-height: 34px;
+            text-align: center;
+            color: #fff;
+            padding: 0 15px;
+            border: 0;
+            cursor: pointer;
+            -moz-border-radius: 2px;
+            border-radius: 2px;
+            background-color: #3ca2e2;
+            margin-top: 10px;
+        }
+
+        .table-btn {
+            color: #54b1ec;
+            background-color: transparent;
+            border: 0;
+            font-size: 12px;
+            color: #3ca2e2;
+            outline: none;
+            cursor: pointer;
+            padding: 3px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body ng-controller="myController">
+<div>
+    <div class="tab-tit">
+        <a href="javascript:void (0);" ng-class="{'current':model.clickTab==1}" ng-click="events.clickTab(1)">玩偶模块</a>
+        <a href="javascript:void (0);" ng-class="{'current':model.clickTab==2}" ng-click="events.clickTab(2)">玩偶组模块</a>
+    </div>
+
+    <div ng-if="model.clickTab==1">
+        <!--创建玩偶-->
+        <div>
+            <span class="col-tit" ng-click="events.changeShowTab_one()">创建玩偶</span><br/>
+
+            <div class="dash-line-4"></div>
+            <div ng-show="model.showContentTab_one">
+                <div>
+                    <span>玩偶名：</span>
+                    <input type="text" ng-model="dollModel.dollAddDto.dollName"><br/>
+                </div>
+                <div>
+                    <span>玩偶等级：</span>
+                    <select ng-model="dollModel.dollAddDto.dollLevel"
+                            ng-options="dollLevel.id as dollLevel.showName for dollLevel in dollLevels"></select><br/>
+                </div>
+                <div>
+                    <span>玩偶类型：</span>
+                    <select ng-model="dollModel.dollAddDto.dollType"
+                            ng-options="dollType.id as dollType.showName for dollType in dollTypes"></select><br/>
+                </div>
+                <div ng-if="dollModel.dollAddDto.dollType==2">
+                    <span>添加机器人玩偶：</span>
+
+                    <!--玩偶列表-->
+                    <div style="margin-right: 30px;">
+                        <div class="tab-tit" style="margin-top: 30px;">
+                            <a href="javascript:void (0);" ng-class="{'current':1==1}">玩偶列表</a>
+                        </div>
+
+                        <input type="text" ng-model="dollModel.dollQuery.dollName" placeholder="输入玩偶名">
+
+                        <select ng-model="dollModel.dollQuery.dollLevel">
+                            <option value="0">全部</option>
+                            <option value="1">橙色</option>
+                            <option value="2">紫色</option>
+                            <option value="3">蓝色</option>
+                        </select>
+
+                        <select ng-model="dollModel.dollQuery.dollType">
+                            <option value="0">全部</option>
+                            <option value="1">单玩偶</option>
+                            <option value="2">机器人</option>
+                        </select>
+
+                        <button type="button" class="btn" ng-click="events.findDollInfoList()">查询</button>
+                        <button type="button" class="btn" ng-click="events.findDollInfoList()">刷新</button>
+                        <br/>
+
+                        <table border="1" style="margin-top: 20px;">
+                            <tr>
+                                <th>玩偶名</th>
+                                <th>玩偶等级</th>
+                                <th>玩偶类型</th>
+                                <th>子玩偶</th>
+                                <th width="70;">操作</th>
+                            </tr>
+                            <tr ng-repeat="dollInfo in dollModel.dollInfoList">
+                                <td>{{dollInfo.dollName}}</td>
+                                <td ng-class="{'text-peru':dollInfo.dollLevel==1,'text-purple':dollInfo.dollLevel==2,'text-blue':dollInfo.dollLevel==3}">
+                                    {{dollInfo.dollLevel==1?'橙':dollInfo.dollLevel==2?'紫':'蓝'}}
+                                </td>
+                                <td>{{dollInfo.dollType==1?'单玩偶':'机器人'}}</td>
+                                <td><span ng-repeat="dollChild in dollInfo.dollChildList" class="table-btn" ng-click="events.findDollOnClick(dollChild)">{{dollChild.dollName}}&nbsp;</span></td>
+                                <td>
+                                    <a type="button" ng-show="!events.isSelected(dollInfo.dollId)" class="table-btn"
+                                       ng-click="events.selectDoll(dollInfo)">选择</a>
+                                    <a type="button" ng-show="events.isSelected(dollInfo.dollId)" class="table-btn"
+                                       ng-click="events.cancelSelect(dollInfo)">取消选择</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="dash-line-4"></div>
+                    <!--已选玩偶列表-->
+                    <div style="margin-right: 30px;">
+                        <div class="tab-tit">
+                            <a href="javascript:void (0);" ng-class="{'current':1==1}">已选玩偶</a>
+                        </div>
+
+                        <div class="dash-line-4"></div>
+                        <table border="1">
+                            <tr>
+                                <th>玩偶名</th>
+                                <th>玩偶等级</th>
+                                <th>玩偶类型</th>
+                                <th>子玩偶</th>
+                                <th width="70px;">操作</th>
+                            </tr>
+                            <tr ng-repeat="selectDoll in model.selectDollList">
+                                <td>{{selectDoll.dollName}}</td>
+                                <td ng-class="{'text-peru':selectDoll.dollLevel==1,'text-purple':selectDoll.dollLevel==2,'text-blue':selectDoll.dollLevel==3}">
+                                    {{selectDoll.dollLevel==1?'橙':selectDoll.dollLevel==2?'紫':'蓝'}}
+                                </td>
+                                <td>{{selectDoll.dollType==1?'单玩偶':'机器人'}}</td>
+                                <td><span ng-repeat="dollChild in selectDoll.dollChildList" class="table-btn" ng-click="events.findDollOnClick(dollChild)">{{dollChild.dollName}}&nbsp;</span></td>
+                                <td>
+                                    <a type="button" ng-show="events.isSelected(selectDoll.dollId)" class="table-btn"
+                                       ng-click="events.cancelSelect(selectDoll)">取消选择</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <button class="btn" ng-click="events.createDollInfo()">创建</button>
+            </div>
+        </div>
+        <!--玩偶列表-->
+        <div>
+            <span class="col-tit" ng-click="events.changeShowTab_one()">玩偶列表</span><br/>
+
+            <div ng-show="!model.showContentTab_one">
+                <input type="text" ng-model="dollModel.dollQuery.dollName" placeholder="输入玩偶名">
+
+                <select ng-model="dollModel.dollQuery.dollLevel">
+                    <option value="0">全部</option>
+                    <option value="1">橙色</option>
+                    <option value="2">紫色</option>
+                    <option value="3">蓝色</option>
+                </select>
+
+                <select ng-model="dollModel.dollQuery.dollType">
+                    <option value="0">全部</option>
+                    <option value="1">单玩偶</option>
+                    <option value="2">机器人</option>
+                </select>
+
+                <button type="button" class="btn" ng-click="events.findDollInfoList()">查询</button>
+                <button type="button" class="btn" ng-click="events.findDollInfoList()">刷新</button>
+                <br/>
+
+                <div class="dash-line-4"></div>
+
+                <table border="1">
+                    <tr>
+                        <th>玩偶名</th>
+                        <th>玩偶等级</th>
+                        <th>玩偶类型</th>
+                        <th>子玩偶</th>
+                        <th>操作</th>
+                    </tr>
+                    <tr ng-repeat="dollInfo in dollModel.dollInfoList">
+                        <td>{{dollInfo.dollName}}</td>
+                        <td ng-class="{'text-peru':dollInfo.dollLevel==1,'text-purple':dollInfo.dollLevel==2,'text-blue':dollInfo.dollLevel==3}">
+                            {{dollInfo.dollLevel==1?'橙':dollInfo.dollLevel==2?'紫':'蓝'}}
+                        </td>
+                        <td>{{dollInfo.dollType==1?'单玩偶':'机器人'}}</td>
+                        <td><span ng-repeat="dollChild in dollInfo.dollChildList" class="table-btn" ng-click="events.findDollOnClick(dollChild)">{{dollChild.dollName}}&nbsp;</span></td>
+                        <td width="50px;">
+                            <a type="button" class="table-btn" ng-click="events.deleteDollInfoById(dollInfo)">删除</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <div ng-if="model.clickTab==2">
+        <!--创建玩偶组-->
+        <div>
+            <span class="col-tit" ng-click="events.changeShowTab_two()">添加玩偶组</span><br/>
+
+            <div class="dash-line-4"></div>
+            <div ng-show="model.showContentTab_two">
+                <div>
+                    <span>玩偶组名：</span>
+                    <input type="text" ng-model="model.dollGroupDto.dollGroupName"><br/>
+                </div>
+                <!--玩偶列表-->
+                <div>
+                    <div class="tab-tit" style="margin-top: 30px;">
+                        <a href="javascript:void (0);" ng-class="{'current':1==1}">玩偶列表</a>
+                    </div>
+
+                    <input type="text" ng-model="dollModel.dollQuery.dollName" placeholder="输入玩偶名">
+
+                    <select ng-model="dollModel.dollQuery.dollLevel">
+                        <option value="0">全部</option>
+                        <option value="1">橙色</option>
+                        <option value="2">紫色</option>
+                        <option value="3">蓝色</option>
+                    </select>
+
+                    <select ng-model="dollModel.dollQuery.dollType">
+                        <option value="0">全部</option>
+                        <option value="1">单玩偶</option>
+                        <option value="2">机器人</option>
+                    </select>
+
+                    <button type="button" class="btn" ng-click="events.findDollInfoList()">查询</button>
+                    <button type="button" class="btn" ng-click="events.findDollInfoList()">刷新</button>
+                    <br/>
+
+                    <table border="1" style="margin-top: 20px;">
+                        <tr>
+                            <th>玩偶名</th>
+                            <th>玩偶等级</th>
+                            <th>玩偶类型</th>
+                            <th>子玩偶</th>
+                            <th width="70;">操作</th>
+                        </tr>
+                        <tr ng-repeat="dollInfo in dollModel.dollInfoList">
+                            <td>{{dollInfo.dollName}}</td>
+                            <td ng-class="{'text-peru':dollInfo.dollLevel==1,'text-purple':dollInfo.dollLevel==2,'text-blue':dollInfo.dollLevel==3}">
+                                {{dollInfo.dollLevel==1?'橙':dollInfo.dollLevel==2?'紫':'蓝'}}
+                            </td>
+                            <td>{{dollInfo.dollType==1?'单玩偶':'机器人'}}</td>
+                            <td><span ng-repeat="dollChild in dollInfo.dollChildList" class="table-btn" ng-click="events.findDollOnClick(dollChild)">{{dollChild.dollName}}&nbsp;</span></td>
+                            <td>
+                                <a type="button" ng-show="!events.isSelected(dollInfo.dollId)" class="table-btn"
+                                   ng-click="events.selectDoll(dollInfo)">选择</a>
+                                <a type="button" ng-show="events.isSelected(dollInfo.dollId)" class="table-btn"
+                                   ng-click="events.cancelSelect(dollInfo)">取消选择</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="dash-line-4"></div>
+                <!--已选玩偶列表-->
+                <div>
+                    <div class="tab-tit">
+                        <a href="javascript:void (0);" ng-class="{'current':1==1}">已选玩偶</a>
+                    </div>
+
+                    <div class="dash-line-4"></div>
+                    <table border="1">
+                        <tr>
+                            <th>玩偶名</th>
+                            <th>玩偶等级</th>
+                            <th>玩偶类型</th>
+                            <th>子玩偶</th>
+                            <th width="70px;">操作</th>
+                        </tr>
+                        <tr ng-repeat="selectDoll in model.selectDollList">
+                            <td>{{selectDoll.dollName}}</td>
+                            <td ng-class="{'text-peru':selectDoll.dollLevel==1,'text-purple':selectDoll.dollLevel==2,'text-blue':selectDoll.dollLevel==3}">
+                                {{selectDoll.dollLevel==1?'橙':selectDoll.dollLevel==2?'紫':'蓝'}}
+                            </td>
+                            <td>{{selectDoll.dollType==1?'单玩偶':'机器人'}}</td>
+                            <td>{{selectDoll.dollParentId==-1?'/':'/'}}</td>
+                            <td>
+                                <a type="button" ng-show="events.isSelected(selectDoll.dollId)" class="table-btn"
+                                   ng-click="events.cancelSelect(selectDoll)">取消选择</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <button type="button" class="btn" ng-click="events.saveDollGroup(dollInfo)">保存</button>
+                </div>
+            </div>
+        </div>
+        <!--获取玩偶组-->
+        <div>
+            <span class="col-tit" ng-click="events.changeShowTab_two()">玩偶组列表</span><br/>
+
+            <div class="dash-line-4"></div>
+            <div ng-show="!model.showContentTab_two">
+                撒打算打算多撒多所多多
+            </div>
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pokeman.model.PmDollInfo">
+
+    <insert id="saveDollInfo" parameterType="pmDollInfo">
+        INSERT INTO `pm_doll_info` (`DI_DOLL_ID`,`DI_DOLL_NAME`, `DI_DOLL_LEVEL`, `DI_DOLL_TYPE`, `DI_DOLL_CHILD`,`CREATE_TIME`)
+        VALUES (#{dollId},#{dollName}, #{dollLevel}, #{dollType},#{dollChild},#{createTime});
+    </insert>
+
+    <select id="findDollInfoList" parameterType="map" resultType="pmDollInfo">
+        SELECT
+        pdi.DI_DOLL_ID dollId,
+        pdi.DI_DOLL_NAME dollName,
+        pdi.DI_DOLL_LEVEL dollLevel,
+        pdi.DI_DOLL_TYPE dollType,
+        pdi.DI_DOLL_CHILD dollChild,
+        pdi.CREATE_TIME createTime
+        FROM pm_doll_info pdi
+        WHERE
+        1=1
+        <if test="dollName != null ">
+            AND DI_DOLL_NAME like CONCAT('%', #{dollName},'%' )
+        </if>
+        <if test="dollLevel != 0">
+            AND DI_DOLL_LEVEL=#{dollLevel}
+        </if>
+        <if test="dollType != 0">
+            AND DI_DOLL_TYPE=#{dollType}
+        </if>
+
+        ORDER BY pdi.CREATE_TIME DESC
+    </select>
+
+    <select id="findDollById" parameterType="map" resultType="pmDollInfo">
+        SELECT
+        pdi.DI_DOLL_ID dollId,
+        pdi.DI_DOLL_NAME dollName,
+        pdi.DI_DOLL_LEVEL dollLevel,
+        pdi.DI_DOLL_TYPE dollType,
+        pdi.DI_DOLL_CHILD dollChild,
+        pdi.CREATE_TIME createTime
+        FROM pm_doll_info pdi
+        WHERE
+        DI_DOLL_ID = #{dollId}
+    </select>
+    <delete id="deleteDollById" parameterType="map">
+        DELETE
+        FROM
+	    pm_doll_info
+        WHERE
+	    DI_DOLL_ID = #{dollId}
+    </delete>
+</mapper>
